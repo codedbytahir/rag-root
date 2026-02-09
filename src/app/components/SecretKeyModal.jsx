@@ -41,7 +41,7 @@ export default function SecretKeyModal({ apiKey, onClose }) {
             onClick={onClose}
             className="mt-8 w-full py-3 bg-white text-black font-bold rounded-lg hover:bg-gray-200 transition-colors"
           >
-            I've saved it
+            I&apos;ve saved it
           </button>
         </div>
       </div>

@@ -3,27 +3,26 @@ import { Groq } from "@llamaindex/groq";
 import { SupabaseVectorStore } from "@llamaindex/supabase";
 import { VectorStoreIndex, Settings } from "llamaindex";
 
-// 1. Configure Settings
-Settings.embedModel = new GeminiEmbedding({
-  apiKey: process.env.GOOGLE_API_KEY,
-  model: "text-embedding-004",
-});
-
-Settings.llm = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-  model: "openai/gpt-oss-120b",
-});
-
 /**
  * Performs the RAG Query using the specific working logic
  */
 export async function performRAG({ query, brain_id, stream = true }) {
+  // 1. Configure Settings
+  Settings.embedModel = new GeminiEmbedding({
+    apiKey: process.env.GOOGLE_API_KEY,
+    model: "text-embedding-004",
+  });
+
+  Settings.llm = new Groq({
+    apiKey: process.env.GROQ_API_KEY,
+    model: "llama3-8b-8192",
+  });
+
   // 2. Connect to Vector Store
   const vectorStore = new SupabaseVectorStore({
     supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
     supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
-    tableName: "document_sections",
-    queryName: "match_documents",
+    table: "document_sections",
   });
 
   const index = await VectorStoreIndex.fromVectorStore(vectorStore);

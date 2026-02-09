@@ -19,7 +19,6 @@
     "llamaindex": "^0.12.1",
     "lucide-react": "^0.562.0",
     "next": "^15.5.9",
-    "nvidia": "^1.0.0",
     "pdf-parse": "^2.4.5",
     "pdfjs-dist": "^5.4.449",
     "react": "19.2.1",
@@ -30,7 +29,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "eslint": "^9",
-    "eslint-config-next": "16.0.8",
+    "eslint-config-next": "15.1.0",
     "tailwindcss": "^4"
   }
 }
