@@ -1,0 +1,88 @@
+'use client';
+
+import { useState } from 'react';
+import Link from 'next/link';
+import { Menu, X } from 'lucide-react';
+
+export default function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    // GLASS HEADER: Hardcoded colors matching your HTML exactly
+    // bg-[#0f1515] with 85% opacity + backdrop-blur
+    <nav className="fixed top-0 z-50 w-full border-b border-white/5 bg-[#0f1515]/85 backdrop-blur-[12px]">
+      <div className="flex justify-center w-full">
+        <div className="flex max-w-[1280px] w-full px-4 sm:px-10 py-4 items-center justify-between">
+          
+          {/* LOGO SECTION */}
+          <Link href="/" className="flex items-center gap-3 cursor-pointer group">
+            {/* Icon Color: #39E079 */}
+            <div className="w-8 h-8 text-[#39E079] group-hover:text-[#0bcbcb] transition-colors duration-300">
+              {/* SVG Replacement for Material Symbol 'hub' */}
+              <svg viewBox="0 0 24 24" fill="currentColor" className="w-full h-full">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M12 9V5 M12 15V19 M9 12H5 M15 12H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <circle cx="12" cy="4" r="2" />
+                <circle cx="12" cy="20" r="2" />
+                <circle cx="4" cy="12" r="2" />
+                <circle cx="20" cy="12" r="2" />
+              </svg>
+            </div>
+            <h2 className="text-white text-lg font-bold tracking-tight font-sans">RAG ROOT</h2>
+          </Link>
+
+          {/* DESKTOP LINKS */}
+          <div className="hidden md:flex flex-1 justify-center gap-8">
+            {['Features', 'Use Cases', 'Pricing'].map((item) => (
+              <Link 
+                key={item} 
+                href="#" 
+                // Hover Color: #39E079
+                className="text-gray-300 hover:text-[#39E079] transition-colors text-sm font-medium font-sans"
+              >
+                {item}
+              </Link>
+            ))}
+          </div>
+
+          {/* RIGHT ACTIONS */}
+          <div className="flex items-center gap-4">
+            <Link 
+              href="#" 
+              className="hidden sm:block text-sm font-medium text-gray-300 hover:text-white transition-colors font-sans"
+            >
+              Log in
+            </Link>
+            
+            {/* CTA BUTTON */}
+            {/* bg-[#39E079] -> hover:bg-[#0bcbcb] */}
+            {/* Shadow: rgba(13,242,242,0.3) */}
+            <button className="flex cursor-pointer items-center justify-center rounded-lg h-9 px-5 bg-[#39E079] hover:bg-[#0bcbcb] text-[#111818] text-sm font-bold transition-all shadow-[0_0_15px_rgba(13,242,242,0.3)] hover:shadow-[0_0_25px_rgba(13,242,242,0.5)] font-sans">
+              Get Started
+            </button>
+
+            {/* MOBILE TOGGLE */}
+            <button 
+              className="md:hidden text-gray-300 hover:text-white" 
+              onClick={() => setIsOpen(!isOpen)}
+            >
+              {isOpen ? <X /> : <Menu />}
+            </button>
+          </div>
+
+        </div>
+      </div>
+      
+      {/* MOBILE MENU */}
+      {isOpen && (
+        <div className="md:hidden absolute top-full left-0 w-full bg-[#0f1515] border-b border-white/5 p-6 flex flex-col gap-4 shadow-2xl">
+           <Link href="#" className="text-gray-300 text-lg font-sans hover:text-[#39E079]">Features</Link>
+           <Link href="#" className="text-gray-300 text-lg font-sans hover:text-[#39E079]">Use Cases</Link>
+           <Link href="#" className="text-gray-300 text-lg font-sans hover:text-[#39E079]">Pricing</Link>
+           <div className="h-px bg-white/10 my-2"></div>
+           <Link href="/login" className="text-gray-300 text-lg font-sans hover:text-[#39E079]">Log in</Link>
+        </div>
+      )}
+    </nav>
+  );
+}

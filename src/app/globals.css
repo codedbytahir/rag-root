@@ -24,3 +24,17 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+/* Custom Markdown Styles */
+.markdown-container h1 { @apply text-xl font-bold mb-4 text-white; }
+.markdown-container h2 { @apply text-lg font-bold mb-3 text-white; }
+.markdown-container h3 { @apply text-base font-bold mb-2 text-white; }
+.markdown-container p { @apply mb-4 last:mb-0; }
+.markdown-container ul { @apply list-disc ml-5 mb-4 space-y-1; }
+.markdown-container ol { @apply list-decimal ml-5 mb-4 space-y-1; }
+.markdown-container li { @apply pl-1; }
+.markdown-container strong { @apply text-[#10b981] font-bold; }
+.markdown-container code { @apply bg-white/10 px-1 py-0.5 rounded font-mono text-xs text-emerald-400; }
+.markdown-container pre { @apply bg-[#050a08] p-4 rounded-lg border border-white/10 overflow-x-auto mb-4; }
+.markdown-container table { @apply w-full border-collapse mb-4 text-xs; }
+.markdown-container th { @apply border border-white/10 bg-white/5 p-2 text-left font-bold; }
+.markdown-container td { @apply border border-white/10 p-2 text-left; }

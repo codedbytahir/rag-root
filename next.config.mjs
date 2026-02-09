@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
+  experimental: {
+    serverComponentsExternalPackages: ["llamaindex","@llamaindex/openai"],
+  },
 };
-
-export default nextConfig;
