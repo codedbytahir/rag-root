@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Key, Plus, Trash2, ShieldCheck, ArrowLeft, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
 import SecretKeyModal from '@/app/components/SecretKeyModal';
@@ -12,16 +12,16 @@ export default function ApiKeysPage() {
 
  
 
-  const fetchKey = async () => {
+  const fetchKey = useCallback(async () => {
     const res = await fetch('/api/keys');
     const data = await res.json();
     setApiKeyData(data);
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     fetchKey();
-  }, []);
+  }, [fetchKey]);
 
   const handleGenerateKey = async () => {
     setProcessing(true);
@@ -60,7 +60,7 @@ export default function ApiKeysPage() {
             </div>
             <h2 className="text-2xl font-bold mb-2">Generate your API Key</h2>
             <p className="text-gray-400 max-w-sm mb-8">
-                You haven't created an API key yet. Generate one to start using RAG ROOT programmatically.
+                You haven&apos;t created an API key yet. Generate one to start using RAG ROOT programmatically.
             </p>
             <button 
               onClick={handleGenerateKey}

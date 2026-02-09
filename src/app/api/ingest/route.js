@@ -19,22 +19,21 @@ import { SupabaseVectorStore } from "@llamaindex/supabase";
 
 export const runtime = "nodejs";
 
-/* ----------------------------- EMBEDDINGS ----------------------------- */
-// Ensure API key exists before initializing
-if (!process.env.GOOGLE_API_KEY) {
-  throw new Error("Missing GOOGLE_API_KEY environment variable");
-}
-
-const googleGenAIEmbedModel = new GeminiEmbedding({
-  apiKey: process.env.GOOGLE_API_KEY,
-  model: "text-embedding-004",
-});
-
-Settings.embedModel = googleGenAIEmbedModel;
-Settings.llm = null;
-
 /* ------------------------------ HANDLER ------------------------------- */
 export async function POST(request) {
+  // 0. Validate Environment Variables
+  if (!process.env.GOOGLE_API_KEY) {
+    return NextResponse.json({ error: "Missing GOOGLE_API_KEY environment variable" }, { status: 500 });
+  }
+
+  const googleGenAIEmbedModel = new GeminiEmbedding({
+    apiKey: process.env.GOOGLE_API_KEY,
+    model: "text-embedding-004",
+  });
+
+  Settings.embedModel = googleGenAIEmbedModel;
+  Settings.llm = null;
+
   // 1. Validate Environment Variables for Supabase
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return NextResponse.json({ error: "Missing Supabase Environment Variables" }, { status: 500 });
@@ -74,17 +73,13 @@ export async function POST(request) {
 
     const docs = rawDocs.map(doc => new Document({
       text: doc.text,
-      metadata: { file_id, brain_id }
+      metadata: { ...doc.metadata, file_id, brain_id }
     }));
 
     /* ----------------------- VECTOR STORE ----------------------------- */
-    // FIX: Explicitly define schema and ensure client is passed correctly
     const vectorStore = new SupabaseVectorStore({
       client: supabase,
       table: "document_sections",
-      schema: "public",               // ✅ Added: fixes "relation" ambiguity
-      queryName: "match_documents",
-      embeddingColumnName: "embedding",
     });
 
     const storageContext = await storageContextFromDefaults({
