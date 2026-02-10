@@ -103,6 +103,7 @@ export default function BrainWorkspace() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           file_id: newDoc.id,
+          file_name: file.name,
           file_path: filePath,
           brain_id: params.id
         })

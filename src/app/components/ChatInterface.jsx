@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Bot, Loader2, Sparkles } from 'lucide-react';
+import { Send, Bot, Loader2, Sparkles, FileText } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
@@ -26,7 +26,8 @@ export default function ChatInterface({ brainId }) {
     setInput('');
     setIsLoading(true);
 
-    setMessages(prev => [...prev, { role: 'ai', content: '' }]);
+    // Initial empty AI message with sources array
+    setMessages(prev => [...prev, { role: 'ai', content: '', sources: [] }]);
 
     try {
       const response = await fetch('/api/chat', {
@@ -42,18 +43,39 @@ export default function ChatInterface({ brainId }) {
 
       const reader = response.body.getReader();
       const textDecoder = new TextDecoder();
+      let accumulatedText = "";
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        const chunk = textDecoder.decode(value);
         
-        setMessages(prev => {
-          const newMessages = [...prev];
-          const lastIndex = newMessages.length - 1;
-          newMessages[lastIndex].content += chunk;
-          return newMessages;
-        });
+        const chunk = textDecoder.decode(value);
+        accumulatedText += chunk;
+
+        if (accumulatedText.includes('[SOURCES]')) {
+          const [text, sourceJson] = accumulatedText.split('[SOURCES]');
+
+          setMessages(prev => {
+            const newMessages = [...prev];
+            const lastIndex = newMessages.length - 1;
+            newMessages[lastIndex].content = text.trim();
+            if (sourceJson) {
+              try {
+                newMessages[lastIndex].sources = JSON.parse(sourceJson.trim());
+              } catch (e) {
+                // Partial JSON, ignore until complete
+              }
+            }
+            return newMessages;
+          });
+        } else {
+          setMessages(prev => {
+            const newMessages = [...prev];
+            const lastIndex = newMessages.length - 1;
+            newMessages[lastIndex].content = accumulatedText;
+            return newMessages;
+          });
+        }
       }
     } catch (error) {
       console.error(error);
@@ -81,27 +103,48 @@ export default function ChatInterface({ brainId }) {
               </div>
             )}
             
-            <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed shadow-lg ${
-              msg.role === 'user' 
-                ? 'bg-[#10b981] text-black font-medium rounded-tr-none' 
-                : msg.role === 'system'
-                ? 'bg-red-500/10 text-red-400 border border-red-500/20 w-full text-center'
-                : 'bg-[#111818] text-gray-200 border border-white/5 rounded-tl-none'
-            }`}>
-              
-              {/* RENDER MARKDOWN FOR AI MESSAGES */}
-              {msg.role === 'ai' ? (
-                <div className="markdown-container prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-[#050a08] prose-pre:border prose-pre:border-white/10 prose-emerald">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {msg.content || (isLoading && i === messages.length - 1 ? '...' : '')}
-                  </ReactMarkdown>
-                </div>
-              ) : (
-                msg.content
-              )}
+            <div className={`max-w-[85%] flex flex-col gap-3 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+              <div className={`p-4 rounded-2xl text-sm leading-relaxed shadow-lg ${
+                msg.role === 'user'
+                  ? 'bg-[#10b981] text-black font-medium rounded-tr-none'
+                  : msg.role === 'system'
+                  ? 'bg-red-500/10 text-red-400 border border-red-500/20 w-full text-center'
+                  : 'bg-[#111818] text-gray-200 border border-white/5 rounded-tl-none'
+              }`}>
 
-              {!msg.content && isLoading && msg.role === 'ai' && (
-                 <Loader2 size={16} className="animate-spin text-[#10b981] mt-1" />
+                {/* RENDER MARKDOWN FOR AI MESSAGES */}
+                {msg.role === 'ai' ? (
+                  <div className="markdown-container prose prose-invert prose-sm max-w-none prose-p:leading-relaxed prose-pre:bg-[#050a08] prose-pre:border prose-pre:border-white/10 prose-emerald">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {msg.content || (isLoading && i === messages.length - 1 ? '...' : '')}
+                    </ReactMarkdown>
+                  </div>
+                ) : (
+                  msg.content
+                )}
+
+                {!msg.content && isLoading && msg.role === 'ai' && (
+                  <Loader2 size={16} className="animate-spin text-[#10b981] mt-1" />
+                )}
+              </div>
+
+              {/* SOURCES LIST */}
+              {msg.role === 'ai' && msg.sources?.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {msg.sources.map((src, idx) => (
+                    <div
+                      key={idx}
+                      title={src.text}
+                      className="px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] text-gray-400 hover:text-white hover:bg-white/10 transition-all cursor-help flex items-center gap-1.5"
+                    >
+                      <FileText size={10} className="text-[#10b981]" />
+                      <span className="max-w-[120px] truncate">{src.metadata?.file_name || 'Document'}</span>
+                      {src.metadata?.page_label && (
+                        <span className="opacity-50">p.{src.metadata.page_label}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>

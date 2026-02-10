@@ -3,8 +3,26 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
-  const { query, brain_id } = await request.json();
   const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    { cookies: { getAll() { return cookieStore.getAll() } } }
+  );
+
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  const { query, brain_id } = await request.json();
+
+  // Verify ownership
+  const { data: brain } = await supabase
+    .from('brains')
+    .select('id')
+    .eq('id', brain_id)
+    .single();
+
+  if (!brain) return NextResponse.json({ error: "Access Denied" }, { status: 403 });
 
   try {
     // 1. DYNAMIC IMPORTS

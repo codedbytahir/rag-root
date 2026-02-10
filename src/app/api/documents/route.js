@@ -68,7 +68,22 @@ export async function POST(request) {
 
 export async function DELETE(request) {
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
   const { id, path } = await request.json();
+
+  // Ensure user owns the file before deleting
+  const { data: file, error: fetchError } = await supabase
+    .from('files')
+    .select('id')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .single();
+
+  if (fetchError || !file) {
+    return NextResponse.json({ error: 'File not found or access denied' }, { status: 403 });
+  }
 
   await supabase.storage.from('docs').remove([path]);
   const { error } = await supabase.from('files').delete().eq('id', id);
