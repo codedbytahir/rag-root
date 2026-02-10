@@ -1,4 +1,5 @@
 import { ArrowRight, CheckCircle, Sparkles, Bot, FileText } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Hero() {
   return (
@@ -37,15 +38,15 @@ export default function Hero() {
 
             {/* Buttons */}
             <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
-              <button className="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-[#39E079] hover:bg-[#0bcbcb] text-[#111818] text-base font-bold transition-transform hover:scale-105 shadow-[0_0_20px_rgba(57,224,121,0.3)]">
+              <Link href="/login" className="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 bg-[#39E079] hover:bg-[#0bcbcb] text-[#111818] text-base font-bold transition-transform hover:scale-105 shadow-[0_0_20px_rgba(57,224,121,0.3)]">
                 Get Started for Free
-              </button>
-              <button className="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 border border-white/20 bg-white/5 hover:bg-white/10 text-white text-base font-bold transition-all group">
+              </Link>
+              <Link href="#use-cases" className="flex min-w-[140px] cursor-pointer items-center justify-center rounded-lg h-12 px-6 border border-white/20 bg-white/5 hover:bg-white/10 text-white text-base font-bold transition-all group">
                 <div className="flex items-center gap-2">
-                  Watch Demo 
+                  Explore Platform
                   <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                 </div>
-              </button>
+              </Link>
             </div>
 
             {/* Trust Signals */}

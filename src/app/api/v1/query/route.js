@@ -28,7 +28,17 @@ export async function POST(request) {
     if (!keyData) return NextResponse.json({ error: "Invalid API Key" }, { status: 401 });
 
     // 3. Extract request body and check Brain Ownership
-    const { query, brain_id } = await request.json();
+    let body;
+    try {
+      body = await request.json();
+    } catch (e) {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    const { query, brain_id } = body;
+    if (!query || !brain_id) {
+      return NextResponse.json({ error: "Missing required fields: query, brain_id" }, { status: 400 });
+    }
     
     const { data: brain } = await supabaseAdmin
       .from('brains')
@@ -42,8 +52,17 @@ export async function POST(request) {
     // 4. Call Service (Non-streaming for standard JSON API)
     const result = await performRAG({ query, brain_id, stream: false });
 
+    // Format Sources
+    const sources = result.sourceNodes?.map(node => ({
+        file_name: node.node.metadata?.file_name || "Unknown",
+        page_label: node.node.metadata?.page_label || null,
+        text_snippet: node.node.getContent().substring(0, 150) + "...",
+        score: node.score
+    })) || [];
+
     return NextResponse.json({
         answer: result.response,
+        sources: sources,
         brain_id: brain_id,
         created_at: new Date().toISOString()
     });

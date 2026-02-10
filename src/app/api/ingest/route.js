@@ -1,30 +1,41 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 import fs from "fs/promises";
 import path from "path";
 import os from "os";
-
-// LlamaIndex core
-import {
-  VectorStoreIndex,
-  storageContextFromDefaults,
-  Settings,
-  Document
-} from "llamaindex";
-
-// Google + Readers + Supabase
-import { GeminiEmbedding } from "@llamaindex/google";
-import { PDFReader } from "@llamaindex/readers/pdf";
-import { SupabaseVectorStore } from "@llamaindex/supabase";
 
 export const runtime = "nodejs";
 
 /* ------------------------------ HANDLER ------------------------------- */
 export async function POST(request) {
-  // 0. Validate Environment Variables
+  // 0. Auth Check
+  const cookieStore = await cookies();
+  const supabaseAuth = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    { cookies: { getAll() { return cookieStore.getAll() } } }
+  );
+
+  const { data: { user } } = await supabaseAuth.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  // 0.5 Validate Environment Variables
   if (!process.env.GOOGLE_API_KEY) {
     return NextResponse.json({ error: "Missing GOOGLE_API_KEY environment variable" }, { status: 500 });
   }
+
+  // 1. DYNAMIC IMPORTS
+  const { GeminiEmbedding } = await import("@llamaindex/google");
+  const { PDFReader } = await import("@llamaindex/readers/pdf");
+  const { SupabaseVectorStore } = await import("@llamaindex/supabase");
+  const {
+    VectorStoreIndex,
+    storageContextFromDefaults,
+    Settings,
+    Document
+  } = await import("llamaindex");
 
   const googleGenAIEmbedModel = new GeminiEmbedding({
     apiKey: process.env.GOOGLE_API_KEY,
@@ -34,15 +45,25 @@ export async function POST(request) {
   Settings.embedModel = googleGenAIEmbedModel;
   Settings.llm = null;
 
-  // 1. Validate Environment Variables for Supabase
+  // 2. Validate Environment Variables for Supabase
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return NextResponse.json({ error: "Missing Supabase Environment Variables" }, { status: 500 });
   }
 
-  const { file_id, file_path, brain_id } = await request.json();
+  const { file_id, file_path, brain_id, file_name } = await request.json();
+
+  // Verify Brain Ownership
+  const { data: brain } = await supabaseAuth
+    .from('brains')
+    .select('id')
+    .eq('id', brain_id)
+    .single();
+
+  if (!brain) return NextResponse.json({ error: "Access Denied: Brain not found" }, { status: 403 });
+
   const tmpFilePath = path.join(os.tmpdir(), `${file_id}.pdf`);
 
-  // 2. Initialize Supabase Client
+  // 3. Initialize Supabase Admin Client
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -73,7 +94,7 @@ export async function POST(request) {
 
     const docs = rawDocs.map(doc => new Document({
       text: doc.text,
-      metadata: { ...doc.metadata, file_id, brain_id }
+      metadata: { ...doc.metadata, file_id, brain_id, file_name }
     }));
 
     /* ----------------------- VECTOR STORE ----------------------------- */

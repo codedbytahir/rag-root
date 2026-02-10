@@ -2,7 +2,7 @@ import { Upload, BrainCircuit, MessageSquare } from 'lucide-react';
 
 export default function LogicFlow() {
   return (
-    <section className="py-20 bg-[#0c1212] border-t border-white/5 relative overflow-hidden">
+    <section className="py-20 bg-[#0c1212] border-t border-white/5 relative overflow-hidden" id="features">
       
       {/* 1. BACKGROUND GRID PATTERN (CSS translated to Tailwind) */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 pointer-events-none"></div>
