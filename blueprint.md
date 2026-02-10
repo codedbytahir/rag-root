@@ -34,3 +34,9 @@ RAG ROOT is an enterprise-grade RAG (Retrieval-Augmented Generation) application
 - Secured all internal API routes with robust ownership verification.
 - Created API Documentation page at `/dashboard/docs`.
 - Fixed security gap in document deletion logic.
+
+## Performance Optimization
+- **Vector Search (Infrastructure):** Implemented an "Awesome HNSW Algorithm" via `supabase_optimization.sql`.
+  - **HNSW Indexing:** Replaces default sequential scans with Hierarchical Navigable Small World search for sub-100ms retrieval at scale.
+  - **Metadata GIN Indexing:** Optimized JSONB metadata filtering to ensure `brain_id` lookups are near-instant.
+  - **Optimized RPC:** Refactored `match_documents` to leverage index-first filtering for maximum throughput.
