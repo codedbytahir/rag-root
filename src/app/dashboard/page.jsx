@@ -93,7 +93,7 @@ export default function Dashboard() {
                 
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-[#18181b] rounded-xl shadow-2xl border border-white/[0.08] py-1 z-50 animate-in fade-in zoom-in-95 duration-200">
-                    <Link href="/dashboard" className="w-full text-left px-4 py-2 text-sm text-[#a1a1aa] hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <Link href="/dashboard/account" className="w-full text-left px-4 py-2 text-sm text-[#a1a1aa] hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2">
                       <User size={14} /> Account
                     </Link>
                     <Link href="/dashboard/api-keys" className="w-full text-left px-4 py-2 text-sm text-[#a1a1aa] hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2">

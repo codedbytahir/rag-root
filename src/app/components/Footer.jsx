@@ -24,9 +24,9 @@ export default function Footer() {
 
           {/* Links */}
           <div className="flex gap-8 text-sm text-gray-500">
-            <Link href="#" className="hover:text-[#39E079] transition-colors">Documentation</Link>
-            <Link href="#" className="hover:text-[#39E079] transition-colors">API Reference</Link>
-            <Link href="#" className="hover:text-[#39E079] transition-colors">Privacy Policy</Link>
+            <Link href="/dashboard/docs" className="hover:text-[#39E079] transition-colors">Documentation</Link>
+            <Link href="/dashboard/docs" className="hover:text-[#39E079] transition-colors">API Reference</Link>
+            <Link href="#features" className="hover:text-[#39E079] transition-colors">Features</Link>
           </div>
 
           {/* Copyright */}

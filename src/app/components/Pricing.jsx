@@ -1,4 +1,5 @@
 import { Check, Lock, ShieldCheck } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Pricing() {
   return (
@@ -31,9 +32,9 @@ export default function Pricing() {
                 <li className="flex items-center gap-3"><Check size={16} className="text-[#39E079]" /> 500MB Data Storage</li>
                 <li className="flex items-center gap-3"><Check size={16} className="text-[#39E079]" /> Basic PDF Support</li>
               </ul>
-              <button className="mt-auto w-full py-3 rounded-lg border border-white/20 hover:bg-white/5 text-white font-medium transition-colors">
+              <Link href="/login" className="mt-auto w-full py-3 rounded-lg border border-white/20 hover:bg-white/5 text-white font-medium transition-colors text-center">
                 Start Free Trial
-              </button>
+              </Link>
             </div>
 
             {/* === PRO PLAN (Highlighted) === */}
@@ -59,9 +60,9 @@ export default function Pricing() {
                 <li className="flex items-center gap-3"><Check size={16} className="text-[#39E079]" /> 10GB Data Storage</li>
                 <li className="flex items-center gap-3"><Check size={16} className="text-[#39E079]" /> Priority Processing</li>
               </ul>
-              <button className="mt-auto w-full py-3 rounded-lg bg-[#39E079] hover:bg-[#0bcbcb] text-[#111818] font-bold shadow-lg shadow-[#39E079]/20 transition-all">
+              <Link href="/login" className="mt-auto w-full py-3 rounded-lg bg-[#39E079] hover:bg-[#0bcbcb] text-[#111818] font-bold shadow-lg shadow-[#39E079]/20 transition-all text-center">
                 Get Started
-              </button>
+              </Link>
             </div>
 
             {/* === ENTERPRISE PLAN === */}
@@ -80,9 +81,9 @@ export default function Pricing() {
                 <li className="flex items-center gap-3"><Check size={16} className="text-[#39E079]" /> 24/7 Dedicated Support</li>
                 <li className="flex items-center gap-3"><Check size={16} className="text-[#39E079]" /> Custom SSA & SLA</li>
               </ul>
-              <button className="mt-auto w-full py-3 rounded-lg border border-white/20 hover:bg-white/5 text-white font-medium transition-colors">
+              <Link href="/login" className="mt-auto w-full py-3 rounded-lg border border-white/20 hover:bg-white/5 text-white font-medium transition-colors text-center">
                 Contact Sales
-              </button>
+              </Link>
             </div>
 
           </div>

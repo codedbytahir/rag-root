@@ -2,7 +2,7 @@ import { FolderOpen, BarChart2, Settings, UserCircle, Search, Sparkles, MessageS
 
 export default function SplitBrain() {
   return (
-    <section className="py-24 px-4 sm:px-10 flex justify-center bg-[#0f1515]">
+    <section className="py-24 px-4 sm:px-10 flex justify-center bg-[#0f1515]" id="use-cases">
       <div className="max-w-[1280px] w-full flex flex-col gap-10">
         
         {/* Section Header */}
