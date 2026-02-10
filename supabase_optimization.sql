@@ -32,6 +32,9 @@ ON public.document_sections ((metadata->>'brain_id'));
 -- 5. OPTIMIZED match_documents FUNCTION
 -- This version is designed to work perfectly with the HNSW index.
 -- It enforces filtering BEFORE the vector search to maximize performance.
+-- NOTE: We drop it first to avoid "cannot change return type" errors if the signature changed.
+DROP FUNCTION IF EXISTS public.match_documents(vector, int, jsonb);
+
 CREATE OR REPLACE FUNCTION public.match_documents (
   query_embedding vector(768),
   match_count int DEFAULT 5,
