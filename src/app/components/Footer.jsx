@@ -31,7 +31,7 @@ export default function Footer() {
 
           {/* Copyright */}
           <div className="text-gray-600 text-xs">
-            © 2025 RAG ROOT. All rights reserved.
+            © {new Date().getFullYear()} RAG ROOT. All rights reserved.
           </div>
 
         </div>

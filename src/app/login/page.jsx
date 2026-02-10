@@ -78,7 +78,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <div className="relative z-10 flex gap-6 text-xs text-gray-500 font-medium uppercase tracking-wider">
-          <span>© 2024 RAG ROOT Inc.</span>
+          <span>© {new Date().getFullYear()} RAG ROOT Inc.</span>
         </div>
       </div>
 
