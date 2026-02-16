@@ -2,22 +2,65 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { User, Mail, Shield, ArrowLeft, Loader2, Calendar, UserCircle } from 'lucide-react';
+import { User, Mail, Shield, ArrowLeft, Loader2, Calendar, UserCircle, Key, Save, CheckCircle } from 'lucide-react';
 import { createClient } from '@/app/utils/supabase/client';
 
 export default function AccountPage() {
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState({ global_groq_api_key: '', global_google_api_key: '' });
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
-    async function getUser() {
+    async function getData() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
+
+      if (user) {
+        const { data: prof } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (prof) {
+            setProfile({
+                global_groq_api_key: prof.global_groq_api_key || '',
+                global_google_api_key: prof.global_google_api_key || ''
+            });
+        }
+      }
       setLoading(false);
     }
-    getUser();
+    getData();
   }, []);
+
+  const handleSaveKeys = async () => {
+    setSaving(true);
+    setMessage('');
+
+    try {
+        const res = await fetch('/api/profile/keys', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(profile)
+        });
+
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(err.error || "Failed to save keys");
+        }
+
+        setMessage("Global API Keys saved successfully!");
+        setTimeout(() => setMessage(''), 3000);
+    } catch (error) {
+        alert("Error saving keys: " + error.message);
+    } finally {
+        setSaving(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -88,6 +131,62 @@ export default function AccountPage() {
                   {new Date(user?.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long' })}
                 </div>
               </div>
+            </div>
+          </div>
+
+          {/* Global API Keys */}
+          <div className="bg-[#18181b] border border-white/[0.08] rounded-2xl p-8">
+            <div className="flex items-center gap-3 mb-6">
+               <div className="w-10 h-10 rounded-lg bg-[#10b981]/10 flex items-center justify-center text-[#10b981] border border-[#10b981]/20">
+                  <Key size={20} />
+               </div>
+               <div>
+                  <h3 className="text-lg font-bold text-white">Global API Keys</h3>
+                  <p className="text-xs text-gray-500">Default keys used for all brains unless specified otherwise.</p>
+               </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Groq API Key</label>
+                <input
+                  type="password"
+                  value={profile.global_groq_api_key}
+                  onChange={(e) => setProfile({...profile, global_groq_api_key: e.target.value})}
+                  className="w-full bg-[#09090b] border border-white/5 px-4 py-3 rounded-lg text-sm text-gray-300 focus:border-[#10b981] outline-none transition-colors"
+                  placeholder="gsk_..."
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Google API Key (Gemini)</label>
+                <input
+                  type="password"
+                  value={profile.global_google_api_key}
+                  onChange={(e) => setProfile({...profile, global_google_api_key: e.target.value})}
+                  className="w-full bg-[#09090b] border border-white/5 px-4 py-3 rounded-lg text-sm text-gray-300 focus:border-[#10b981] outline-none transition-colors"
+                  placeholder="AIza..."
+                />
+              </div>
+
+              <div className="flex items-center justify-between pt-2">
+                <p className="text-[10px] text-gray-500 italic">* Keys are encrypted before storage.</p>
+                <button
+                  onClick={handleSaveKeys}
+                  disabled={saving}
+                  className="flex items-center gap-2 bg-[#10b981] hover:bg-[#059669] text-black font-bold py-2 px-6 rounded-lg transition-all disabled:opacity-50"
+                >
+                  {saving ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+                  <span>{saving ? 'Saving...' : 'Save Keys'}</span>
+                </button>
+              </div>
+
+              {message && (
+                <div className="flex items-center gap-2 text-[#10b981] text-sm animate-in fade-in slide-in-from-bottom-2">
+                   <CheckCircle size={16} />
+                   <span>{message}</span>
+                </div>
+              )}
             </div>
           </div>
 
