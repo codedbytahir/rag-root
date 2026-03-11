@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { decrypt } from "@/app/utils/encryption";
 
 export async function POST(request) {
   const cookieStore = await cookies();
@@ -15,10 +16,10 @@ export async function POST(request) {
 
   const { query, brain_id } = await request.json();
 
-  // Verify ownership
+  // Fetch full brain settings for model info and keys
   const { data: brain } = await supabase
     .from('brains')
-    .select('id')
+    .select('*')
     .eq('id', brain_id)
     .single();
 
@@ -29,17 +30,34 @@ export async function POST(request) {
     const { 
       SupabaseVectorStore, 
       VectorStoreIndex, 
-      Settings, 
-      GeminiEmbedding // Using Google's Embedding class
+      Settings
     } = await import("llamaindex");
+    const { GeminiEmbedding } = await import("@llamaindex/google");
 
-    // 2. CONFIGURE GOOGLE EMBEDDINGS
-    Settings.embedModel = new GeminiEmbedding({
-      apiKey: process.env.GOOGLE_API_KEY,
-      model: "text-embedding-005", // Google's latest
+    // 2. DETERMINE GOOGLE KEY & MODEL
+    let googleKey = process.env.GOOGLE_API_KEY;
+    if (brain.use_global_keys) {
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('global_google_api_key')
+            .eq('id', user.id)
+            .single();
+        if (profile?.global_google_api_key) googleKey = decrypt(profile.global_google_api_key);
+    } else if (brain.google_api_key) {
+        googleKey = decrypt(brain.google_api_key);
+    }
+
+    const embeddingModel = brain.embedding_model || "text-embedding-005";
+
+    // 3. CONFIGURE GOOGLE EMBEDDINGS
+    const embedModel = new GeminiEmbedding({
+      apiKey: googleKey,
+      model: embeddingModel,
     });
 
-    // 3. CONNECT TO YOUR SUPABASE STORE
+    Settings.embedModel = embedModel;
+
+    // 4. CONNECT TO YOUR SUPABASE STORE
     const vectorStore = new SupabaseVectorStore({
       supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
       supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -47,21 +65,21 @@ export async function POST(request) {
       queryName: "match_documents",
     });
 
-    // 4. INITIALIZE INDEX FROM EXISTING DATA
-    const index = await VectorStoreIndex.fromVectorStore(vectorStore);
+    // 5. INITIALIZE INDEX FROM EXISTING DATA
+    const index = await VectorStoreIndex.fromVectorStore(vectorStore, {
+        embedModel: embedModel
+    });
 
-    // 5. THE RETRIEVER (Using the logic you provided)
+    // 6. THE RETRIEVER
     const retriever = index.asRetriever({ 
         similarityTopK: 3,
-        // Ensure we only retrieve from this specific brain
         preFilters: { brain_id: brain_id } 
     });
 
-    // 6. EXECUTE RETRIEVAL
+    // 7. EXECUTE RETRIEVAL
     const results = await retriever.retrieve(query);
 
-    // 7. FORMAT RESULTS FOR UI
-    // Extract text and metadata (like page numbers)
+    // 8. FORMAT RESULTS FOR UI
     const formattedResults = results.map(node => ({
       text: node.node.getContent(),
       metadata: node.node.metadata,

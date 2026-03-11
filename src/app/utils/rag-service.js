@@ -57,15 +57,19 @@ export async function performRAG({ query, brain_id, stream = true, brain: passed
   const embeddingModel = brain.embedding_model || "text-embedding-005";
 
   // 4. CONFIGURE LLAMAINDEX
-  Settings.embedModel = new GeminiEmbedding({
+  const embedModel = new GeminiEmbedding({
     apiKey: googleKey,
     model: embeddingModel,
   });
 
-  Settings.llm = new Groq({
+  const llm = new Groq({
     apiKey: groqKey,
     model: chatModel,
   });
+
+  // Explicitly set in Settings as well for general compatibility
+  Settings.embedModel = embedModel;
+  Settings.llm = llm;
 
   // 5. CONNECT TO VECTOR STORE
   const vectorStore = new SupabaseVectorStore({
@@ -75,14 +79,18 @@ export async function performRAG({ query, brain_id, stream = true, brain: passed
     queryName: "match_documents",
   });
 
-  const index = await VectorStoreIndex.fromVectorStore(vectorStore);
+  // 6. INITIALIZE INDEX
+  const index = await VectorStoreIndex.fromVectorStore(vectorStore, {
+    embedModel: embedModel
+  });
 
-  // 6. SETUP QUERY ENGINE
+  // 7. SETUP QUERY ENGINE
   const queryEngine = index.asQueryEngine({
+    llm: llm,
     preFilters: { brain_id: brain_id }
   });
 
-  // 7. EXECUTE
+  // 8. EXECUTE
   return await queryEngine.query({
     query: query,
     stream: stream,
