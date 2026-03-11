@@ -61,12 +61,12 @@ export default function Dashboard() {
           <div className="flex justify-between items-center h-16">
             
             {/* Logo */}
-            <div className="flex items-center gap-3">
+            <Link href="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
               <div className="flex items-center justify-center w-8 h-8 bg-[#10b981]/10 rounded-lg text-[#10b981] border border-[#10b981]/20">
                 <Brain size={20} strokeWidth={2.5} />
               </div>
               <span className="font-bold text-lg tracking-tight text-white">RAG ROOT</span>
-            </div>
+            </Link>
 
             {/* Center Title */}
             <div className="hidden md:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2">

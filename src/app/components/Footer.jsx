@@ -26,7 +26,7 @@ export default function Footer() {
           <div className="flex gap-8 text-sm text-gray-500">
             <Link href="/dashboard/docs" className="hover:text-[#39E079] transition-colors">Documentation</Link>
             <Link href="/dashboard/docs" className="hover:text-[#39E079] transition-colors">API Reference</Link>
-            <Link href="#features" className="hover:text-[#39E079] transition-colors">Features</Link>
+            <Link href="/#features" className="hover:text-[#39E079] transition-colors">Features</Link>
           </div>
 
           {/* Copyright */}
