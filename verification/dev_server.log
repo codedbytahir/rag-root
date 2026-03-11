@@ -1,0 +1,35 @@
+
+> out@0.1.0 dev
+> next dev
+
+   ▲ Next.js 15.5.9
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.2:3000
+
+ ✓ Starting...
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+ ✓ Ready in 1580ms
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1126ms (164 modules)
+ ○ Compiling / ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (130kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled / in 5.8s (803 modules)
+ HEAD / 200 in 6669ms
+ GET / 200 in 207ms
+ GET / 200 in 315ms
+ GET / 200 in 301ms
+ GET / 200 in 260ms
+ ○ Compiling /dashboard/docs ...
+ ✓ Compiled /dashboard/docs in 891ms (813 modules)
+ GET /dashboard/docs 200 in 1309ms
+ GET / 200 in 347ms
+ GET / 200 in 288ms
+ GET /dashboard/docs 200 in 100ms
+ ✓ Compiled in 629ms (813 modules)
+ ✓ Compiled in 391ms (813 modules)
+ GET / 200 in 566ms
+ GET /dashboard/docs 200 in 127ms
