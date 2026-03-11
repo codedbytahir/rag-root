@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Settings, Save, RefreshCw, AlertTriangle,
   Key, Activity, Cpu, Database, Loader2,
-  CheckCircle, X, Shield, BarChart3, Clock
+  CheckCircle, X, Shield, BarChart3, Clock, Edit3
 } from 'lucide-react';
 
 const LLM_MODELS = [
@@ -16,7 +16,8 @@ const LLM_MODELS = [
 ];
 
 const EMBEDDING_MODELS = [
-  { id: 'text-embedding-004', name: 'Google Text Embedding 004 (Default)' }
+  { id: 'text-embedding-005', name: 'Google Text Embedding 005 (Default)' },
+  { id: 'text-embedding-004', name: 'Google Text Embedding 004' }
 ];
 
 export default function BrainSettings({ brain, onClose, onUpdate }) {
@@ -26,13 +27,22 @@ export default function BrainSettings({ brain, onClose, onUpdate }) {
   const [stats, setStats] = useState(null);
   const [message, setMessage] = useState('');
 
+  const initialChatModel = brain.chat_model || 'llama3-8b-8192';
+  const initialEmbeddingModel = brain.embedding_model || 'text-embedding-005';
+
+  const isChatModelCustom = !LLM_MODELS.find(m => m.id === initialChatModel);
+  const isEmbeddingModelCustom = !EMBEDDING_MODELS.find(m => m.id === initialEmbeddingModel);
+
   const [formData, setFormData] = useState({
-    chat_model: brain.chat_model || 'llama3-8b-8192',
-    embedding_model: brain.embedding_model || 'text-embedding-004',
+    chat_model: initialChatModel,
+    embedding_model: initialEmbeddingModel,
     use_global_keys: brain.use_global_keys !== false,
     groq_api_key: '',
     google_api_key: ''
   });
+
+  const [showCustomChat, setShowCustomChat] = useState(isChatModelCustom);
+  const [showCustomEmbedding, setShowCustomEmbedding] = useState(isEmbeddingModelCustom);
 
   useEffect(() => {
     fetchStats();
@@ -137,30 +147,91 @@ export default function BrainSettings({ brain, onClose, onUpdate }) {
             <div className="space-y-6">
               {/* Chat Model */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                  <Cpu size={14} /> Chatting Model (LLM)
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
+                  <span className="flex items-center gap-2"><Cpu size={14} /> Chatting Model (LLM)</span>
+                  {showCustomChat && (
+                    <button
+                      onClick={() => { setShowCustomChat(false); setFormData({...formData, chat_model: LLM_MODELS[0].id})}}
+                      className="text-[10px] text-[#10b981] hover:underline"
+                    >
+                      Back to list
+                    </button>
+                  )}
                 </label>
-                <select
-                  value={formData.chat_model}
-                  onChange={(e) => setFormData({...formData, chat_model: e.target.value})}
-                  className="w-full bg-[#09090b] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors appearance-none"
-                >
-                  {LLM_MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                </select>
+
+                {!showCustomChat ? (
+                  <select
+                    value={formData.chat_model}
+                    onChange={(e) => {
+                      if (e.target.value === 'custom') {
+                        setShowCustomChat(true);
+                      } else {
+                        setFormData({...formData, chat_model: e.target.value});
+                      }
+                    }}
+                    className="w-full bg-[#09090b] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors appearance-none"
+                  >
+                    {LLM_MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                    <option value="custom">-- Custom Model ID --</option>
+                  </select>
+                ) : (
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={formData.chat_model}
+                      onChange={(e) => setFormData({...formData, chat_model: e.target.value})}
+                      placeholder="Enter custom model ID (e.g. gpt-4o)"
+                      className="w-full bg-[#09090b] border border-[#10b981]/50 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors"
+                      autoFocus
+                    />
+                    <Edit3 size={14} className="absolute right-4 top-3.5 text-gray-500" />
+                  </div>
+                )}
               </div>
 
               {/* Embedding Model */}
               <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center gap-2">
-                  <Database size={14} /> Embedding Model
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
+                  <span className="flex items-center gap-2"><Database size={14} /> Embedding Model</span>
+                  {showCustomEmbedding && (
+                    <button
+                      onClick={() => { setShowCustomEmbedding(false); setFormData({...formData, embedding_model: EMBEDDING_MODELS[0].id})}}
+                      className="text-[10px] text-[#10b981] hover:underline"
+                    >
+                      Back to list
+                    </button>
+                  )}
                 </label>
-                <select
-                  value={formData.embedding_model}
-                  onChange={(e) => setFormData({...formData, embedding_model: e.target.value})}
-                  className="w-full bg-[#09090b] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors appearance-none"
-                >
-                  {EMBEDDING_MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                </select>
+
+                {!showCustomEmbedding ? (
+                  <select
+                    value={formData.embedding_model}
+                    onChange={(e) => {
+                      if (e.target.value === 'custom') {
+                        setShowCustomEmbedding(true);
+                      } else {
+                        setFormData({...formData, embedding_model: e.target.value});
+                      }
+                    }}
+                    className="w-full bg-[#09090b] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors appearance-none"
+                  >
+                    {EMBEDDING_MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                    <option value="custom">-- Custom Model ID --</option>
+                  </select>
+                ) : (
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={formData.embedding_model}
+                      onChange={(e) => setFormData({...formData, embedding_model: e.target.value})}
+                      placeholder="Enter custom model ID (e.g. text-embedding-3-small)"
+                      className="w-full bg-[#09090b] border border-[#10b981]/50 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors"
+                      autoFocus
+                    />
+                    <Edit3 size={14} className="absolute right-4 top-3.5 text-gray-500" />
+                  </div>
+                )}
+
                 {formData.embedding_model !== brain.embedding_model && brain.embedding_model && (
                   <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs">
                     <AlertTriangle size={14} className="shrink-0 mt-0.5" />
