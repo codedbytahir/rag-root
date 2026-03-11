@@ -36,7 +36,7 @@ export async function POST(request) {
     // 2. CONFIGURE GOOGLE EMBEDDINGS
     Settings.embedModel = new GeminiEmbedding({
       apiKey: process.env.GOOGLE_API_KEY,
-      model: "text-embedding-004", // Google's latest
+      model: "text-embedding-005", // Google's latest
     });
 
     // 3. CONNECT TO YOUR SUPABASE STORE

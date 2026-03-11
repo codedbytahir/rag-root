@@ -53,7 +53,7 @@ export async function processIngestion({ file_id, file_path, brain_id, file_name
 
   if (!googleKey) throw new Error("Google API Key not found for embeddings");
 
-  const embeddingModel = brain.embedding_model || "text-embedding-004";
+  const embeddingModel = brain.embedding_model || "text-embedding-005";
 
   const googleGenAIEmbedModel = new GeminiEmbedding({
     apiKey: googleKey,
