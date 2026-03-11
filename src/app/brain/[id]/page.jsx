@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { 
   ArrowLeft, UploadCloud, FileText, Trash2, 
-  Loader2, MessageSquare, Plus, AlertCircle 
+  Loader2, MessageSquare, Plus, AlertCircle, Settings
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -12,35 +12,37 @@ import Link from 'next/link';
 import { validatePDF } from '@/app/utils/pdfValidator';
 import { createClient } from '@/app/utils/supabase/client';
 import ChatInterface from '@/app/components/ChatInterface';
+import BrainSettings from '@/app/components/BrainSettings';
 
 export default function BrainWorkspace() {
   const params = useParams(); 
   const router = useRouter();
   
   const [brain, setBrain] = useState(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState(""); 
 
   // 1. FETCH DATA (Via API)
-  useEffect(() => {
-    const fetchBrainData = async () => {
-      try {
-        const res = await fetch(`/api/brain/${params.id}`);
-        if (!res.ok) throw new Error("Failed to load brain");
-        
-        const data = await res.json();
-        setBrain(data.brain);
-        setFiles(data.files);
-      } catch (error) {
-        console.error(error);
-        router.push('/dashboard');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchBrainData = async () => {
+    try {
+      const res = await fetch(`/api/brain/${params.id}`);
+      if (!res.ok) throw new Error("Failed to load brain");
 
+      const data = await res.json();
+      setBrain(data.brain);
+      setFiles(data.files);
+    } catch (error) {
+      console.error(error);
+      router.push('/dashboard');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchBrainData();
   }, [params.id, router]);
 
@@ -158,9 +160,17 @@ export default function BrainWorkspace() {
       {/* === SIDEBAR === */}
       <aside className="w-72 bg-[#0c1212] border-r border-white/5 flex flex-col z-20 shrink-0">
         <div className="p-4 border-b border-white/5">
-          <Link href="/dashboard" className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors text-xs uppercase font-bold tracking-wider mb-4">
-             <ArrowLeft size={12} /> Back
-          </Link>
+          <div className="flex justify-between items-start mb-4">
+            <Link href="/dashboard" className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors text-xs uppercase font-bold tracking-wider">
+               <ArrowLeft size={12} /> Back
+            </Link>
+            <button
+              onClick={() => setIsSettingsOpen(true)}
+              className="p-1.5 rounded-lg bg-white/5 text-gray-400 hover:text-[#10b981] hover:bg-[#10b981]/10 transition-all border border-transparent hover:border-[#10b981]/20"
+            >
+              <Settings size={16} />
+            </button>
+          </div>
           <h1 className="text-xl font-bold text-white truncate">{brain?.name}</h1>
           <div className="flex items-center gap-2 mt-2">
             <span className="px-2 py-0.5 rounded text-[10px] bg-[#10b981]/10 text-[#10b981] border border-[#10b981]/20 uppercase">
@@ -245,6 +255,15 @@ export default function BrainWorkspace() {
             </div>
          )}
       </main>
+
+      {/* Settings Modal */}
+      {isSettingsOpen && brain && (
+        <BrainSettings
+          brain={brain}
+          onClose={() => setIsSettingsOpen(false)}
+          onUpdate={fetchBrainData}
+        />
+      )}
 
       {/* Global Scrollbar Styles */}
       <style jsx global>{`
