@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { encrypt } from "@/app/utils/encryption";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(request, { params }) {
   try {
     const { id: brain_id } = await params;

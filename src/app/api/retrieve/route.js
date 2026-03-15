@@ -15,10 +15,10 @@ export async function POST(request) {
 
   const { query, brain_id } = await request.json();
 
-  // Verify ownership
+  // Verify ownership and get settings
   const { data: brain } = await supabase
     .from('brains')
-    .select('id')
+    .select('id, embedding_model')
     .eq('id', brain_id)
     .single();
 
@@ -36,7 +36,7 @@ export async function POST(request) {
     // 2. CONFIGURE GOOGLE EMBEDDINGS
     Settings.embedModel = new GeminiEmbedding({
       apiKey: process.env.GOOGLE_API_KEY,
-      model: "text-embedding-005", // Google's latest
+      model: brain.embedding_model || "text-multilingual-embedding-002", // Use brain's model or fallback
     });
 
     // 3. CONNECT TO YOUR SUPABASE STORE
