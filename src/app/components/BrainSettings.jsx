@@ -16,7 +16,7 @@ const LLM_MODELS = [
 ];
 
 const EMBEDDING_MODELS = [
-  { id: 'text-multilingual-embedding-002', name: 'Google Multilingual Embedding 002 (Default)' },
+  { id: 'gemini-embedding-001', name: 'Gemini Embedding 001 (Default)' },
   { id: 'text-embedding-004', name: 'Google Text Embedding 004' }
 ];
 
@@ -28,7 +28,7 @@ export default function BrainSettings({ brain, onClose, onUpdate }) {
   const [message, setMessage] = useState('');
 
   const initialChatModel = brain.chat_model || 'llama3-8b-8192';
-  const initialEmbeddingModel = brain.embedding_model || 'text-multilingual-embedding-002';
+  const initialEmbeddingModel = brain.embedding_model || 'gemini-embedding-001';
 
   const isChatModelCustom = !LLM_MODELS.find(m => m.id === initialChatModel);
   const isEmbeddingModelCustom = !EMBEDDING_MODELS.find(m => m.id === initialEmbeddingModel);
@@ -47,7 +47,7 @@ export default function BrainSettings({ brain, onClose, onUpdate }) {
   // Sync state when brain prop changes (e.g., after a successful save and re-fetch)
   useEffect(() => {
     const chatMod = brain.chat_model || 'llama3-8b-8192';
-    const embedMod = brain.embedding_model || 'text-multilingual-embedding-002';
+    const embedMod = brain.embedding_model || 'gemini-embedding-001';
 
     setFormData(prev => ({
       ...prev,

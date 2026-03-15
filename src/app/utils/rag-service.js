@@ -54,7 +54,7 @@ export async function performRAG({ query, brain_id, stream = true, brain: passed
   }
 
   const chatModel = brain.chat_model || "llama3-8b-8192";
-  const embeddingModel = brain.embedding_model || "text-multilingual-embedding-002";
+  const embeddingModel = brain.embedding_model || "gemini-embedding-001";
 
   // 4. CONFIGURE LLAMAINDEX
   Settings.embedModel = new GeminiEmbedding({

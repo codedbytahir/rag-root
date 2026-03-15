@@ -36,7 +36,7 @@ export async function POST(request) {
     // 2. CONFIGURE GOOGLE EMBEDDINGS
     Settings.embedModel = new GeminiEmbedding({
       apiKey: process.env.GOOGLE_API_KEY,
-      model: brain.embedding_model || "text-multilingual-embedding-002", // Use brain's model or fallback
+      model: brain.embedding_model || "gemini-embedding-001", // Use brain's model or fallback
     });
 
     // 3. CONNECT TO YOUR SUPABASE STORE
