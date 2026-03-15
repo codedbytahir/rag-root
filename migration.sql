@@ -5,7 +5,7 @@
 -- 1. Update Brains table
 ALTER TABLE public.brains
 ADD COLUMN IF NOT EXISTS chat_model TEXT DEFAULT 'llama3-8b-8192',
-ADD COLUMN IF NOT EXISTS embedding_model TEXT DEFAULT 'text-embedding-005',
+ADD COLUMN IF NOT EXISTS embedding_model TEXT DEFAULT 'text-embedding-004',
 ADD COLUMN IF NOT EXISTS groq_api_key TEXT,
 ADD COLUMN IF NOT EXISTS google_api_key TEXT,
 ADD COLUMN IF NOT EXISTS use_global_keys BOOLEAN DEFAULT TRUE;
