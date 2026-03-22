@@ -42,7 +42,7 @@ export async function POST(request) {
       .eq('id', user.id)
       .single();
 
-    chatModel = brain.chat_model || "llama3-8b-8192";
+    chatModel = "llama-3.3-70b-versatile";
 
     const userQuery = messages[messages.length - 1].content;
 

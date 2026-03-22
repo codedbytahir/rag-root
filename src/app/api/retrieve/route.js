@@ -1,77 +1,65 @@
+import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { processIngestion } from "@/app/utils/ingest-service";
+
+export const runtime = "nodejs";
 
 export async function POST(request) {
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-    { cookies: { getAll() { return cookieStore.getAll() } } }
-  );
-
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-  const { query, brain_id } = await request.json();
-
-  // Verify ownership and get settings
-  const { data: brain } = await supabase
-    .from('brains')
-    .select('id, embedding_model')
-    .eq('id', brain_id)
-    .single();
-
-  if (!brain) return NextResponse.json({ error: "Access Denied" }, { status: 403 });
-
   try {
-    // 1. DYNAMIC IMPORTS
-    const { 
-      SupabaseVectorStore, 
-      VectorStoreIndex, 
-      Settings, 
-      GeminiEmbedding // Using Google's Embedding class
-    } = await import("llamaindex");
+    /* --------------------------- AUTH -------------------------------- */
+    const cookieStore = await cookies();
+    const supabaseAuth = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      { cookies: { getAll() { return cookieStore.getAll(); } } }
+    );
 
-    // 2. CONFIGURE GOOGLE EMBEDDINGS
-    Settings.embedModel = new GeminiEmbedding({
-      apiKey: process.env.GOOGLE_API_KEY,
-      model: brain.embedding_model || "text-multilingual-embedding-002", // Use brain's model or fallback
+    const { data: { user } } = await supabaseAuth.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    /* ------------------------- PARSE BODY --------------------------- */
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+
+    const { file_id, file_path, brain_id, file_name } = body;
+
+    /* ------------------------- VALIDATE ----------------------------- */
+    if (!file_id || !file_path || !brain_id || !file_name) {
+      return NextResponse.json(
+        {
+          error: "Missing required fields",
+          missing: {
+            file_id: !file_id,
+            file_path: !file_path,
+            brain_id: !brain_id,
+            file_name: !file_name,
+          },
+        },
+        { status: 400 }
+      );
+    }
+
+    /* ------------------------- INGEST ------------------------------- */
+    const result = await processIngestion({
+      file_id,
+      file_path,
+      brain_id,
+      file_name,
+      user_id: user.id,
     });
 
-    // 3. CONNECT TO YOUR SUPABASE STORE
-    const vectorStore = new SupabaseVectorStore({
-      supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-      supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-      tableName: "document_sections",
-      queryName: "match_documents",
-    });
+    return NextResponse.json(result);
 
-    // 4. INITIALIZE INDEX FROM EXISTING DATA
-    const index = await VectorStoreIndex.fromVectorStore(vectorStore);
-
-    // 5. THE RETRIEVER (Using the logic you provided)
-    const retriever = index.asRetriever({ 
-        similarityTopK: 3,
-        // Ensure we only retrieve from this specific brain
-        preFilters: { brain_id: brain_id } 
-    });
-
-    // 6. EXECUTE RETRIEVAL
-    const results = await retriever.retrieve(query);
-
-    // 7. FORMAT RESULTS FOR UI
-    // Extract text and metadata (like page numbers)
-    const formattedResults = results.map(node => ({
-      text: node.node.getContent(),
-      metadata: node.node.metadata,
-      score: node.score
-    }));
-
-    return NextResponse.json({ results: formattedResults });
-
-  } catch (error) {
-    console.error("[Retrieval Error]:", error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (err) {
+    console.error("[Ingest API Error]", err);
+    return NextResponse.json(
+      { error: err?.message || "Ingest failed" },
+      { status: 500 }
+    );
   }
 }

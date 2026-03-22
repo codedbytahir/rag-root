@@ -261,7 +261,6 @@ export default function BrainWorkspace() {
         <BrainSettings
           brain={brain}
           onClose={() => setIsSettingsOpen(false)}
-          onUpdate={fetchBrainData}
         />
       )}
 

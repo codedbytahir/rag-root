@@ -2,63 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import {
-  Settings, Save, RefreshCw, AlertTriangle,
-  Key, Activity, Cpu, Database, Loader2,
-  CheckCircle, X, Shield, BarChart3, Clock, Edit3
+  Settings, RefreshCw, AlertTriangle,
+  Loader2,
+  X, BarChart3, Clock
 } from 'lucide-react';
 
-const LLM_MODELS = [
-  { id: 'llama3-8b-8192', name: 'Llama 3 8B (Fast)' },
-  { id: 'llama3-70b-8192', name: 'Llama 3 70B (High Quality)' },
-  { id: 'llama-3.3-70b-versatile', name: 'Llama 3.3 70B Versatile' },
-  { id: 'mixtral-8x7b-32768', name: 'Mixtral 8x7B' },
-  { id: 'gemma2-9b-it', name: 'Gemma 2 9B' }
-];
-
-const EMBEDDING_MODELS = [
-  { id: 'text-multilingual-embedding-002', name: 'Google Multilingual Embedding 002 (Default)' },
-  { id: 'text-embedding-004', name: 'Google Text Embedding 004' }
-];
-
-export default function BrainSettings({ brain, onClose, onUpdate }) {
-  const [activeTab, setActiveTab] = useState('general');
-  const [loading, setLoading] = useState(false);
+export default function BrainSettings({ brain, onClose }) {
+  const [activeTab, setActiveTab] = useState('usage');
   const [reindexing, setReindexing] = useState(false);
   const [stats, setStats] = useState(null);
-  const [message, setMessage] = useState('');
-
-  const initialChatModel = brain.chat_model || 'llama3-8b-8192';
-  const initialEmbeddingModel = brain.embedding_model || 'text-multilingual-embedding-002';
-
-  const isChatModelCustom = !LLM_MODELS.find(m => m.id === initialChatModel);
-  const isEmbeddingModelCustom = !EMBEDDING_MODELS.find(m => m.id === initialEmbeddingModel);
-
-  const [formData, setFormData] = useState({
-    chat_model: initialChatModel,
-    embedding_model: initialEmbeddingModel,
-    use_global_keys: brain.use_global_keys !== false,
-    groq_api_key: '',
-    google_api_key: ''
-  });
-
-  const [showCustomChat, setShowCustomChat] = useState(isChatModelCustom);
-  const [showCustomEmbedding, setShowCustomEmbedding] = useState(isEmbeddingModelCustom);
-
-  // Sync state when brain prop changes (e.g., after a successful save and re-fetch)
-  useEffect(() => {
-    const chatMod = brain.chat_model || 'llama3-8b-8192';
-    const embedMod = brain.embedding_model || 'text-multilingual-embedding-002';
-
-    setFormData(prev => ({
-      ...prev,
-      chat_model: chatMod,
-      embedding_model: embedMod,
-      use_global_keys: brain.use_global_keys !== false
-    }));
-
-    setShowCustomChat(!LLM_MODELS.find(m => m.id === chatMod));
-    setShowCustomEmbedding(!EMBEDDING_MODELS.find(m => m.id === embedMod));
-  }, [brain]);
 
   useEffect(() => {
     fetchStats();
@@ -69,27 +21,6 @@ export default function BrainSettings({ brain, onClose, onUpdate }) {
       const res = await fetch(`/api/brain/${brain.id}/stats`);
       if (res.ok) setStats(await res.json());
     } catch (e) { console.error(e); }
-  };
-
-  const handleSave = async () => {
-    setLoading(true);
-    setMessage('');
-    try {
-      const res = await fetch(`/api/brain/${brain.id}/settings`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      if (!res.ok) throw new Error("Failed to save settings");
-
-      setMessage("Settings saved successfully!");
-      onUpdate();
-      setTimeout(() => setMessage(''), 3000);
-    } catch (e) {
-      alert(e.message);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const handleReindex = async () => {
@@ -137,127 +68,27 @@ export default function BrainSettings({ brain, onClose, onUpdate }) {
         {/* Tabs */}
         <div className="flex border-b border-white/5 bg-black/20">
            <button
-             onClick={() => setActiveTab('general')}
-             className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'general' ? 'border-[#10b981] text-[#10b981]' : 'border-transparent text-gray-500 hover:text-white'}`}
-           >
-             Models & Logic
-           </button>
-           <button
-             onClick={() => setActiveTab('keys')}
-             className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'keys' ? 'border-[#10b981] text-[#10b981]' : 'border-transparent text-gray-500 hover:text-white'}`}
-           >
-             API Keys
-           </button>
-           <button
              onClick={() => setActiveTab('usage')}
              className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'usage' ? 'border-[#10b981] text-[#10b981]' : 'border-transparent text-gray-500 hover:text-white'}`}
            >
              Usage & Logs
+           </button>
+           <button
+             onClick={() => setActiveTab('maintenance')}
+             className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'maintenance' ? 'border-[#10b981] text-[#10b981]' : 'border-transparent text-gray-500 hover:text-white'}`}
+           >
+             Maintenance
            </button>
         </div>
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 custom-scrollbar space-y-8">
 
-          {activeTab === 'general' && (
+          {activeTab === 'maintenance' && (
             <div className="space-y-6">
-              {/* Chat Model */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
-                  <span className="flex items-center gap-2"><Cpu size={14} /> Chatting Model (LLM)</span>
-                  {showCustomChat && (
-                    <button
-                      onClick={() => { setShowCustomChat(false); setFormData({...formData, chat_model: LLM_MODELS[0].id})}}
-                      className="text-[10px] text-[#10b981] hover:underline"
-                    >
-                      Back to list
-                    </button>
-                  )}
-                </label>
-
-                {!showCustomChat ? (
-                  <select
-                    value={formData.chat_model}
-                    onChange={(e) => {
-                      if (e.target.value === 'custom') {
-                        setShowCustomChat(true);
-                      } else {
-                        setFormData({...formData, chat_model: e.target.value});
-                      }
-                    }}
-                    className="w-full bg-[#09090b] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors appearance-none"
-                  >
-                    {LLM_MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                    <option value="custom">-- Custom Model ID --</option>
-                  </select>
-                ) : (
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={formData.chat_model}
-                      onChange={(e) => setFormData({...formData, chat_model: e.target.value})}
-                      placeholder="Enter custom model ID (e.g. gpt-4o)"
-                      className="w-full bg-[#09090b] border border-[#10b981]/50 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors"
-                      autoFocus
-                    />
-                    <Edit3 size={14} className="absolute right-4 top-3.5 text-gray-500" />
-                  </div>
-                )}
-              </div>
-
-              {/* Embedding Model */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-widest flex items-center justify-between">
-                  <span className="flex items-center gap-2"><Database size={14} /> Embedding Model</span>
-                  {showCustomEmbedding && (
-                    <button
-                      onClick={() => { setShowCustomEmbedding(false); setFormData({...formData, embedding_model: EMBEDDING_MODELS[0].id})}}
-                      className="text-[10px] text-[#10b981] hover:underline"
-                    >
-                      Back to list
-                    </button>
-                  )}
-                </label>
-
-                {!showCustomEmbedding ? (
-                  <select
-                    value={formData.embedding_model}
-                    onChange={(e) => {
-                      if (e.target.value === 'custom') {
-                        setShowCustomEmbedding(true);
-                      } else {
-                        setFormData({...formData, embedding_model: e.target.value});
-                      }
-                    }}
-                    className="w-full bg-[#09090b] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors appearance-none"
-                  >
-                    {EMBEDDING_MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
-                    <option value="custom">-- Custom Model ID --</option>
-                  </select>
-                ) : (
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={formData.embedding_model}
-                      onChange={(e) => setFormData({...formData, embedding_model: e.target.value})}
-                      placeholder="Enter custom model ID (e.g. text-embedding-3-small)"
-                      className="w-full bg-[#09090b] border border-[#10b981]/50 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors"
-                      autoFocus
-                    />
-                    <Edit3 size={14} className="absolute right-4 top-3.5 text-gray-500" />
-                  </div>
-                )}
-
-                {formData.embedding_model !== brain.embedding_model && brain.embedding_model && (
-                  <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs">
-                    <AlertTriangle size={14} className="shrink-0 mt-0.5" />
-                    <p>Changing the embedding model requires re-indexing all documents. Old vectors will be incompatible.</p>
-                  </div>
-                )}
-              </div>
-
-              <div className="pt-4 border-t border-white/5">
+              <div className="pt-4">
                  <h4 className="text-sm font-bold text-white mb-4">Maintenance</h4>
+                 <p className="text-xs text-gray-400 mb-4">Re-process all documents in this brain. This is useful if you suspect any documents were not indexed correctly.</p>
                  <button
                    onClick={handleReindex}
                    disabled={reindexing}
@@ -267,51 +98,6 @@ export default function BrainSettings({ brain, onClose, onUpdate }) {
                    <span>{reindexing ? 'Re-indexing (Do not close)...' : 'Re-index Documents'}</span>
                  </button>
               </div>
-            </div>
-          )}
-
-          {activeTab === 'keys' && (
-            <div className="space-y-6">
-               <div className="flex items-center justify-between p-4 rounded-xl bg-white/[0.03] border border-white/5">
-                  <div className="flex items-center gap-3">
-                     <Shield size={18} className="text-[#10b981]" />
-                     <div>
-                        <p className="text-sm font-bold">Use Global API Keys</p>
-                        <p className="text-[10px] text-gray-500">Inherit keys from your account settings.</p>
-                     </div>
-                  </div>
-                  <button
-                    onClick={() => setFormData({...formData, use_global_keys: !formData.use_global_keys})}
-                    className={`w-12 h-6 rounded-full transition-colors relative ${formData.use_global_keys ? 'bg-[#10b981]' : 'bg-gray-700'}`}
-                  >
-                    <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${formData.use_global_keys ? 'left-7' : 'left-1'}`}></div>
-                  </button>
-               </div>
-
-               {!formData.use_global_keys && (
-                 <div className="space-y-6 animate-in fade-in slide-in-from-top-2">
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Brain-Specific Groq Key</label>
-                      <input
-                        type="password"
-                        placeholder="gsk_..."
-                        value={formData.groq_api_key}
-                        onChange={(e) => setFormData({...formData, groq_api_key: e.target.value})}
-                        className="w-full bg-[#09090b] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-xs font-bold text-gray-500 uppercase tracking-widest">Brain-Specific Google Key</label>
-                      <input
-                        type="password"
-                        placeholder="AIza..."
-                        value={formData.google_api_key}
-                        onChange={(e) => setFormData({...formData, google_api_key: e.target.value})}
-                        className="w-full bg-[#09090b] border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:border-[#10b981] outline-none transition-colors"
-                      />
-                    </div>
-                 </div>
-               )}
             </div>
           )}
 
@@ -355,24 +141,13 @@ export default function BrainSettings({ brain, onClose, onUpdate }) {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-white/5 bg-white/[0.02] flex items-center justify-between">
-           <div className="flex items-center gap-2">
-              {message && <span className="text-[#10b981] text-xs font-bold flex items-center gap-1"><CheckCircle size={14} /> {message}</span>}
-           </div>
+        <div className="p-6 border-t border-white/5 bg-white/[0.02] flex items-center justify-end">
            <div className="flex gap-3">
               <button
                 onClick={onClose}
                 className="px-6 py-2 rounded-lg border border-white/10 text-white text-sm font-bold hover:bg-white/5 transition-colors"
               >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={loading}
-                className="px-8 py-2 rounded-lg bg-[#10b981] hover:bg-[#059669] text-black text-sm font-bold transition-all disabled:opacity-50 flex items-center gap-2"
-              >
-                {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                <span>Save Changes</span>
+                Close
               </button>
            </div>
         </div>

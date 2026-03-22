@@ -18,16 +18,39 @@ export async function POST(request) {
     const { data: { user } } = await supabaseAuth.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    // 2. Extract Data
-    const { file_id, file_path, brain_id, file_name } = await request.json();
+    // 2. Parse Body Safely
+    let body;
+    try {
+      body = await request.json();
+    } catch {
+      return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
 
-    // 3. Delegate to Service
+    const { file_id, file_path, brain_id, file_name } = body;
+
+    // 3. Validate Required Fields
+    if (!file_id || !file_path || !brain_id || !file_name) {
+      return NextResponse.json(
+        {
+          error: "Missing required fields",
+          missing: {
+            file_id: !file_id,
+            file_path: !file_path,
+            brain_id: !brain_id,
+            file_name: !file_name,
+          },
+        },
+        { status: 400 }
+      );
+    }
+
+    // 4. Delegate to Service
     const result = await processIngestion({
-        file_id,
-        file_path,
-        brain_id,
-        file_name,
-        user_id: user.id
+      file_id,
+      file_path,
+      brain_id,
+      file_name,
+      user_id: user.id,
     });
 
     return NextResponse.json(result);

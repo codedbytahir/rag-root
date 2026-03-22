@@ -40,3 +40,14 @@ RAG ROOT is an enterprise-grade RAG (Retrieval-Augmented Generation) application
   - **HNSW Indexing:** Replaces default sequential scans with Hierarchical Navigable Small World search for sub-100ms retrieval at scale.
   - **Metadata GIN Indexing:** Optimized JSONB metadata filtering to ensure `brain_id` lookups are near-instant.
   - **Optimized RPC:** Refactored `match_documents` to leverage index-first filtering for maximum throughput.
+
+## Feature Removal
+- **User-configurable Models and API Keys:** Removed the functionality that allowed users to specify their own API keys and select different models within the brain settings. The settings panel has been simplified to only show usage statistics and maintenance options (re-indexing). This change hardens the application by ensuring that all API interactions use the globally configured credentials, preventing potential abuse and simplifying the user experience.
+
+## Current Task
+- **Update Embedding Model:** The user requested to update the outdated embedding model. The model `text-multilingual-embedding-002` has been replaced with the newer `text-embedding-004` in the following files:
+  - `src/app/utils/ingest-service.js`
+  - `src/app/api/retrieve/route.js`
+  - `src/app/utils/rag-service.js`
+  - `migration.sql`
+  The `blueprint.md` has been updated to document this change.
