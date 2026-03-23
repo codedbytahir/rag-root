@@ -9,10 +9,10 @@ import {
 import Link from 'next/link';
 
 // Internal Utils & Components
-import { validatePDF } from '@/app/utils/pdfValidator';
-import { createClient } from '@/app/utils/supabase/client';
-import ChatInterface from '@/app/components/ChatInterface';
-import BrainSettings from '@/app/components/BrainSettings';
+import { validatePDF } from '../../utils/pdfValidator';
+import { createClient } from '../../utils/supabase/client';
+import ChatInterface from '../../components/ChatInterface';
+import BrainSettings from '../../components/BrainSettings';
 
 export default function BrainWorkspace() {
   const params = useParams(); 

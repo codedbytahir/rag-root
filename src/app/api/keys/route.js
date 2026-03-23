@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { generateApiKey } from "@/app/utils/api-key";
+import { generateApiKey } from "../../utils/api-key";
 
 const getSupabase = async () => {
   const cookieStore = await cookies();

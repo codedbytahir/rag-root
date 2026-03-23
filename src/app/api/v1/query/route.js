@@ -1,8 +1,9 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { performRAG } from "@/app/utils/rag-service";
+import { performRAG } from "../../../utils/rag-service";
 import crypto from 'crypto';
-import { checkRateLimit, logUsage } from "@/app/utils/usage-service";
+import { checkRateLimit, logUsage } from "../../../utils/usage-service";
+import { resolveModel } from "../../../../lib/models.config";
 
 export async function POST(request) {
   try {
@@ -65,12 +66,14 @@ export async function POST(request) {
     // 4. Call Service (Non-streaming for standard JSON API)
     const result = await performRAG({ query, brain_id, stream: false, brain, profile });
 
+    const chatModel = resolveModel(brain.chat_model);
+
     // 5. Log Usage
     await logUsage({
         userId: keyData.user_id,
         brainId: brain_id,
         status: 'success',
-        model: brain.chat_model || 'llama3-8b-8192',
+        model: chatModel,
         type: 'v1_query',
         tokens: Math.ceil(result.response.length / 4)
     });

@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { Key, Plus, Trash2, ShieldCheck, ArrowLeft, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
-import SecretKeyModal from '@/app/components/SecretKeyModal';
+import SecretKeyModal from '../../components/SecretKeyModal';
 
 export default function ApiKeysPage() {
   const [apiKeyData, setApiKeyData] = useState(null);

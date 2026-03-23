@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { User, Mail, Shield, ArrowLeft, Loader2, Calendar, UserCircle, Key, Save, CheckCircle } from 'lucide-react';
-import { createClient } from '@/app/utils/supabase/client';
+import { createClient } from '../../utils/supabase/client';
 
 export default function AccountPage() {
   const [user, setUser] = useState(null);

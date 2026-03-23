@@ -1,4 +1,5 @@
 import { decrypt } from "./encryption";
+import { MODEL_DEFAULTS, resolveModel } from "../../lib/models.config";
 
 /**
  * Performs the RAG Query using dynamic settings and brain-specific models/keys.
@@ -53,8 +54,8 @@ export async function performRAG({ query, brain_id, stream = true, brain: passed
     if (brain.google_api_key) googleKey = decrypt(brain.google_api_key);
   }
 
-  const chatModel = "llama-3.3-70b-versatile";
-  const embeddingModel = brain.embedding_model || "gemini-embedding-2-preview";
+  const chatModel = resolveModel(brain.chat_model);
+  const embeddingModel = brain.embedding_model || MODEL_DEFAULTS.DEFAULT_EMBEDDING_MODEL;
 
   // 4. CONFIGURE LLAMAINDEX
   Settings.embedModel = new GeminiEmbedding({
@@ -65,6 +66,8 @@ export async function performRAG({ query, brain_id, stream = true, brain: passed
   Settings.llm = new Groq({
     apiKey: groqKey,
     model: chatModel,
+    temperature: MODEL_DEFAULTS.DEFAULT_TEMPERATURE,
+    maxTokens: MODEL_DEFAULTS.DEFAULT_MAX_TOKENS,
   });
 
   // 5. CONNECT TO VECTOR STORE
@@ -78,8 +81,11 @@ export async function performRAG({ query, brain_id, stream = true, brain: passed
   const index = await VectorStoreIndex.fromVectorStore(vectorStore);
 
   // 6. SETUP QUERY ENGINE
+  const systemPrompt = brain.system_prompt || "You are a helpful assistant. Use the provided context to answer questions accurately.";
+
   const queryEngine = index.asQueryEngine({
-    preFilters: { brain_id: brain_id }
+    preFilters: { brain_id: brain_id },
+    systemPrompt: systemPrompt
   });
 
   // 7. EXECUTE

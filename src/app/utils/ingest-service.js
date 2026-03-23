@@ -3,6 +3,7 @@ import fs from "fs/promises";
 import path from "path";
 import os from "os";
 import { decrypt } from "./encryption";
+import { MODEL_DEFAULTS } from "../../lib/models.config";
 
 // ✅ Static imports — prevents dual-load warning
 import { VectorStoreIndex, storageContextFromDefaults, Settings, Document } from "llamaindex";
@@ -48,11 +49,11 @@ export async function processIngestion({ file_id, file_path, brain_id, file_name
   if (!googleKey) throw new Error("Google API Key not found for embeddings");
 
   /* -------------------- EMBEDDING MODEL ----------------------------- */
-  // ✅ Locked to text-embedding-004 (768 dims) — must match your pgvector column
+  const embeddingModel = brain.embedding_model || MODEL_DEFAULTS.DEFAULT_EMBEDDING_MODEL;
+
   const googleGenAIEmbedModel = new GeminiEmbedding({
     apiKey: googleKey,
-    model: "gemini-embedding-2-preview",
-    // dimensions: 1536,
+    model: embeddingModel,
   });
 
   Settings.embedModel = googleGenAIEmbedModel;
@@ -89,7 +90,6 @@ export async function processIngestion({ file_id, file_path, brain_id, file_name
     }));
 
     /* ---------------------- VECTOR STORE ---------------------------- */
-    // ✅ Exact same constructor as working original
     const vectorStore = new SupabaseVectorStore({
       client: supabaseAdmin,
       table: "document_sections",       // ✅ "table" not "tableName"

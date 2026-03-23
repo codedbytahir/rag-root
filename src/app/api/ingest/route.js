@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { processIngestion } from "@/app/utils/ingest-service";
+import { processIngestion } from "../../utils/ingest-service";
 
 export const runtime = "nodejs";
 

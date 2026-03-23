@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { performRAG } from "@/app/utils/rag-service";
+import { performRAG } from "../../utils/rag-service";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { checkRateLimit, logUsage } from "@/app/utils/usage-service";
+import { checkRateLimit, logUsage } from "../../utils/usage-service";
+import { resolveModel } from "../../../lib/models.config";
 
 export async function POST(request) {
   const { messages, brain_id } = await request.json();
@@ -42,7 +43,7 @@ export async function POST(request) {
       .eq('id', user.id)
       .single();
 
-    chatModel = "llama-3.3-70b-versatile";
+    chatModel = resolveModel(brain.chat_model);
 
     const userQuery = messages[messages.length - 1].content;
 

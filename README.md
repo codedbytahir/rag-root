@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# RAGroot
+
+RAGroot is an enterprise-grade Retrieval-Augmented Generation (RAG) platform built with Next.js 15, Supabase, and LlamaIndex. It empowers users to create isolated "Brains" (knowledge bases), upload PDF documents, and interact with their data through high-precision AI with verifiable citations.
+
+## What's New
+- **Brain Settings Overhaul:** Rebuilt settings panel with live-fetched LLM model selection and custom system prompts.
+- **Dynamic Model Selection:** Fetch models directly from providers (Groq) to stay up-to-date with the latest LLM releases.
+- **Copy Brain ID:** Quickly copy unique identifiers for use in the Public API.
+- **Performance Skeletons:** Implemented pulse skeleton loaders across the dashboard for a smoother UI experience.
+- **Centralized Config:** Single source of truth for model defaults and environment configuration.
+- **SEO & Accessibility:** Optimized SVG markup and improved page metadata for better search ranking.
+
+## Features
+- **Brain Management:** Create and manage multiple isolated knowledge bases.
+- **System Prompts:** Customize the personality and behavior of each Brain.
+- **PDF Ingestion:** Automatic vectorization and indexing of uploaded documents.
+- **Public API:** Robust v1 API for integrating RAG capabilities into external applications.
+- **Citation Engine:** Verifiable sources for every AI response to eliminate hallucinations.
+- **Secure Auth:** Google OAuth integration via Supabase SSR.
 
 ## Getting Started
 
-First, run the development server:
+1. **Clone the repository**
+2. **Install dependencies:**
+   npm i
+3. **Setup Environment Variables:**
+   Copy .env.example to .env.local and fill in your Supabase and AI provider keys.
+4. **Run the server:**
+   dev
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Configuration
+RAGroot uses a centralized configuration in src/lib/models.config.js. You can override defaults using these environment variables:
+- DEFAULT_LLM_MODEL: Default chat model (e.g., llama-3.3-70b-versatile).
+- DEFAULT_EMBEDDING_MODEL: Default embedding model (e.g., gemini-embedding-2-preview).
+- DEFAULT_TEMPERATURE: Controls LLM randomness (default: 0.7).
+- DEFAULT_MAX_TOKENS: Maximum response length.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Architecture
+- src/app/api/: Internal and Public (v1) API routes.
+- src/app/brain/: Dynamic workspace for individual Brains.
+- src/app/dashboard/: User account and brain management interface.
+- src/app/utils/: Core logic for RAG, ingestion, and usage tracking.
+- src/lib/: Centralized configuration and shared utilities.

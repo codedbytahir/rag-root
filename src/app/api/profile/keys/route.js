@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { encrypt } from "@/app/utils/encryption";
+import { encrypt } from "../../../utils/encryption";
 
 export async function POST(request) {
   try {
