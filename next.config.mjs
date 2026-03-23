@@ -1,16 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ["llamaindex","@llamaindex/openai"],
-  },
+  serverExternalPackages: ["llamaindex", "@llamaindex/openai"],
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'file.garden',
-        port: '',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "file.garden",
+        pathname: "/aQTok757O1Vcuyyw/**",
       },
     ],
   },
 };
+
+export default nextConfig;

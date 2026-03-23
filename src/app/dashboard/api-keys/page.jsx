@@ -44,7 +44,7 @@ export default function ApiKeysPage() {
             </Link>
             <h1 className="text-3xl font-bold tracking-tight">API Access</h1>
             <p className="text-gray-400 text-sm mt-1">Use your unique key to query your Brains from external applications.</p>
-            <Link href="/dashboard/docs" className="inline-flex items-center gap-1.5 text-[#10b981] hover:underline text-xs font-bold mt-3">
+            <Link href="/docs" className="inline-flex items-center gap-1.5 text-[#10b981] hover:underline text-xs font-bold mt-3">
                Read API Documentation &rarr;
             </Link>
           </div>

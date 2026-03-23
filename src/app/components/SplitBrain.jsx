@@ -1,4 +1,4 @@
-import { FolderOpen, BarChart2, Settings, UserCircle, Search, Sparkles, MessageSquare } from 'lucide-react';
+import { FolderOpen, BarChart2, Settings, UserCircle, Search, Sparkles, MessageSquare, ArrowRight } from 'lucide-react';
 
 export default function SplitBrain() {
   return (
@@ -163,7 +163,7 @@ export default function SplitBrain() {
                             className="w-full bg-[#161b1b] border border-white/10 rounded-lg pl-4 pr-10 py-3 text-sm text-white focus:outline-none focus:border-[#39E079]/50 transition-colors"
                         />
                         <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-[#39E079] rounded-md text-black hover:bg-[#0bcbcb] transition-colors">
-                            <ArrowRightIcon />
+                            <ArrowRight size={16} />
                         </button>
                     </div>
                 </div>
@@ -176,11 +176,4 @@ export default function SplitBrain() {
       </div>
     </section>
   );
-}
-
-// Simple Arrow Icon Component for the input button
-function ArrowRightIcon() {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-    )
 }

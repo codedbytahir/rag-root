@@ -17,15 +17,14 @@ export default function Navbar() {
 
           {/* LOGO SECTION */}
           <Link href="/" className="flex items-center gap-3 cursor-pointer group">
-            <div style={{ width: '32px', height: '32px', position: 'relative', overflow: 'hidden', borderRadius: '50%' }}>
+            <div style={{ width: '60px', height: '40px', position: 'relative', overflow: 'hidden', borderRadius: '30%' }}>
               <Image
-                src="https://file.garden/aQTok757O1Vcuyyw/ragroot%20logo.jfif"
+                src="https://file.garden/aQTok757O1Vcuyyw/r.PNG"
                 alt="RAG ROOT Logo"
                 fill
-                style={{ objectFit: 'cover', objectPosition: 'center' }}
               />
             </div>
-            <h2 className="text-white text-lg font-bold tracking-tight font-sans">RAG ROOT</h2>
+            <span className="text-white text-lg font-bold tracking-tight font-sans">RAG ROOT</span>
           </Link>
 
           {/* DESKTOP LINKS */}
@@ -33,7 +32,7 @@ export default function Navbar() {
             <Link href="#features" className="text-gray-300 hover:text-[#39E079] transition-colors text-sm font-medium font-sans">Features</Link>
             <Link href="#use-cases" className="text-gray-300 hover:text-[#39E079] transition-colors text-sm font-medium font-sans">Use Cases</Link>
             <Link href="#pricing" className="text-gray-300 hover:text-[#39E079] transition-colors text-sm font-medium font-sans">Pricing</Link>
-            <Link href="/dashboard/docs" className="text-gray-300 hover:text-[#39E079] transition-colors text-sm font-medium font-sans">Docs</Link>
+            <Link href="/docs" className="text-gray-300 hover:text-[#39E079] transition-colors text-sm font-medium font-sans">Docs</Link>
           </div>
 
           {/* RIGHT ACTIONS */}
@@ -70,7 +69,7 @@ export default function Navbar() {
            <Link href="#features" onClick={() => setIsOpen(false)} className="text-gray-300 text-lg font-sans hover:text-[#39E079]">Features</Link>
            <Link href="#use-cases" onClick={() => setIsOpen(false)} className="text-gray-300 text-lg font-sans hover:text-[#39E079]">Use Cases</Link>
            <Link href="#pricing" onClick={() => setIsOpen(false)} className="text-gray-300 text-lg font-sans hover:text-[#39E079]">Pricing</Link>
-           <Link href="/dashboard/docs" onClick={() => setIsOpen(false)} className="text-gray-300 text-lg font-sans hover:text-[#39E079]">Documentation</Link>
+           <Link href="/docs" onClick={() => setIsOpen(false)} className="text-gray-300 text-lg font-sans hover:text-[#39E079]">Documentation</Link>
            <div className="h-px bg-white/10 my-2"></div>
            <Link href="/login" onClick={() => setIsOpen(false)} className="text-gray-300 text-lg font-sans hover:text-[#39E079]">Log in</Link>
         </div>
