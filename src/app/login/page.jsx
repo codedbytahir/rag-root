@@ -9,37 +9,35 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     const supabase = createClient();
     
+    // Fallback to location.origin if NEXT_PUBLIC_SITE_URL is not set
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    const redirectTo = `${siteUrl}/api/auth/callback`;
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        // Redirect back to your dashboard after login
-        redirectTo: `${location.origin}/api/auth/callback`, 
+        redirectTo,
       },
     });
 
     if (error) {
       console.error("Login failed:", error.message);
-      alert("Login failed: " + error.message); // Simple error handling
+      alert("Login failed: " + error.message);
     }
   };
 
   return (
     <div className="flex min-h-screen w-full bg-[#050a08] text-white font-sans selection:bg-[#39E079] selection:text-black">
       
-      {/* ================= LEFT PANEL (High Energy Brand) ================= */}
+      {/* ================= LEFT PANEL ================= */}
       <div className="hidden lg:flex w-[45%] flex-col justify-between relative overflow-hidden bg-[#0c1212] border-r border-white/5 p-12 xl:p-16">
         
-        {/* --- Background Effects (Left) --- */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(57,224,121,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(57,224,121,0.03)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 z-0"></div>
         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-[#39E079]/20 rounded-full blur-[100px] animate-pulse z-0"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-[#0bcbcb]/10 rounded-full blur-[100px] animate-pulse delay-1000 z-0"></div>
         
-        {/* Scanner Line Animation */}
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#39E079]/50 to-transparent opacity-50 animate-[scan_6s_linear_infinite] z-0 pointer-events-none"></div>
 
-        {/* --- Content (Left) --- */}
-        
-        {/* Logo */}
         <Link href="/" className="relative z-10 flex items-center gap-3 group w-fit">
            <div className="relative w-10 h-10 bg-gradient-to-br from-[#1a2520] to-[#0c1212] rounded-lg border border-[#39E079]/30 flex items-center justify-center shadow-[0_0_15px_rgba(57,224,121,0.2)] group-hover:scale-105 transition-transform duration-300">
                <Network className="text-[#39E079] w-5 h-5" />
@@ -47,7 +45,6 @@ export default function LoginPage() {
            <span className="text-xl font-bold tracking-tight">RAG ROOT</span>
         </Link>
 
-        {/* Main Text */}
         <div className="relative z-10 mt-auto mb-12 max-w-lg space-y-6">
            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#39E079]/10 border border-[#39E079]/20 text-[#39E079] text-xs font-bold tracking-wider uppercase w-fit">
               <Zap size={12} fill="currentColor" /> v1.0 Live
@@ -61,7 +58,6 @@ export default function LoginPage() {
              Enterprise-grade RAG for Finance & Healthcare. Eliminate hallucinations with verifiable citations and 100% data privacy.
            </p>
 
-           {/* Stats / Features Grid */}
            <div className="grid grid-cols-2 gap-4 pt-4">
               <div className="p-4 rounded-xl bg-white/5 border border-white/5 backdrop-blur-sm">
                  <Globe className="text-[#39E079] mb-2" size={20} />
@@ -76,19 +72,16 @@ export default function LoginPage() {
            </div>
         </div>
 
-        {/* Footer */}
         <div className="relative z-10 flex gap-6 text-xs text-gray-500 font-medium uppercase tracking-wider">
           <span>© {new Date().getFullYear()} RAG ROOT Inc.</span>
         </div>
       </div>
 
-      {/* ================= RIGHT PANEL (Auth Form) ================= */}
+      {/* ================= RIGHT PANEL ================= */}
       <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-8 relative overflow-hidden">
         
-        {/* Background Grid (Right) */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_100%)] z-0"></div>
 
-        {/* Mobile Logo */}
         <Link href="/" className="lg:hidden mb-8 flex items-center gap-2 z-10">
            <div className="w-8 h-8 bg-[#39E079] rounded flex items-center justify-center text-black">
              <Network size={20} />
@@ -96,10 +89,8 @@ export default function LoginPage() {
            <span className="font-bold text-xl">RAG ROOT</span>
         </Link>
 
-        {/* Glass Auth Card */}
         <div className="relative w-full max-w-[400px] z-10">
             
-            {/* Glow Behind Card */}
             <div className="absolute -inset-0.5 bg-gradient-to-r from-[#39E079] to-[#0bcbcb] rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
 
             <div className="relative bg-[#0c1212]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
@@ -109,17 +100,15 @@ export default function LoginPage() {
                     <p className="mt-2 text-sm text-gray-400">Access your intelligent workspace.</p>
                 </div>
 
-                {/* The "Super" Google Button */}
                 <button 
                     onClick={handleGoogleLogin}
+                    aria-label="Continue with Google"
                     className="group relative w-full flex items-center justify-center gap-4 bg-white/[0.03] backdrop-blur-md border border-white/10 hover:border-[#39E079]/50 text-white font-bold py-4 px-4 rounded-2xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-[0_0_30px_rgba(57,224,121,0.15)] overflow-hidden"
                 >
-                    {/* Inner Shine */}
                     <div className="absolute inset-0 bg-gradient-to-tr from-[#39E079]/10 via-transparent to-[#0bcbcb]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                    {/* Google Icon Container */}
                     <div className="relative z-10 w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-lg transform group-hover:rotate-[-5deg] transition-transform duration-300">
-                      <svg className="w-6 h-6" viewBox="0 0 24 24">
+                      <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true">
                           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                           <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
                           <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
@@ -129,7 +118,6 @@ export default function LoginPage() {
                     
                     <span className="relative z-10 text-lg tracking-tight">Continue with Google</span>
 
-                    {/* Sliding Light Ray */}
                     <div className="absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:animate-[shine_1.5s_ease-in-out_infinite]" />
                 </button>
 
@@ -143,7 +131,6 @@ export default function LoginPage() {
 
       </div>
 
-      {/* Animation Styles */}
       <style jsx>{`
         @keyframes scan {
             0% { top: -10%; }

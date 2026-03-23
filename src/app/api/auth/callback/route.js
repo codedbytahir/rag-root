@@ -5,7 +5,9 @@ import { NextResponse } from 'next/server'
 export async function GET(request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  const next = searchParams.get('next') ?? '/dashboard' // Redirect to dashboard after login
+
+  // Use searchParams.next if present, otherwise default to /dashboard
+  const next = searchParams.get('next') ?? '/dashboard'
 
   if (code) {
     const cookieStore = await cookies()
@@ -14,24 +16,29 @@ export async function GET(request) {
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
       {
         cookies: {
-          get(name) {
-            return cookieStore.get(name)?.value
-          },
-          set(name, value, options) {
-            cookieStore.set({ name, value, ...options })
-          },
-          remove(name, options) {
-            cookieStore.delete({ name, ...options })
+          getAll() { return cookieStore.getAll() },
+          setAll(cookiesToSet) {
+            try {
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options)
+              );
+            } catch {}
           },
         },
       }
     )
+
     const { error } = await supabase.auth.exchangeCodeForSession(code)
+
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`)
+      // In production, we should redirect back to the site URL
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || origin;
+      const redirectUrl = new URL(next, siteUrl);
+      return NextResponse.redirect(redirectUrl.toString())
     }
   }
 
-  // Return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+  // Error case
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || origin;
+  return NextResponse.redirect(new URL('/auth/auth-code-error', siteUrl).toString())
 }

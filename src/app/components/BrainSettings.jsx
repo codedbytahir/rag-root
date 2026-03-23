@@ -76,7 +76,7 @@ export default function BrainSettings({ brain, onClose }) {
       ></div>
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl bg-[#0c1212]/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-2xl bg-[#0c1212]/95 border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-200">
 
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/5 bg-white/[0.02]">
@@ -100,7 +100,7 @@ export default function BrainSettings({ brain, onClose }) {
         {/* Content */}
         <div className="p-6 space-y-8 flex-1 overflow-y-auto custom-scrollbar">
 
-          {/* LLM Selector */}
+          {/* Feature 1: LLM Selector */}
           <div className="space-y-3">
             <label className="flex items-center gap-2 text-sm font-bold text-gray-300">
               <Cpu size={16} className="text-[#10b981]" />
@@ -136,7 +136,7 @@ export default function BrainSettings({ brain, onClose }) {
             </p>
           </div>
 
-          {/* System Prompt */}
+          {/* Feature 2: System Prompt */}
           <div className="space-y-3">
             <label className="flex items-center justify-between text-sm font-bold text-gray-300">
               <div className="flex items-center gap-2">
@@ -181,7 +181,7 @@ export default function BrainSettings({ brain, onClose }) {
                 onClick={onClose}
                 className="px-6 py-2 rounded-lg border border-white/10 text-white text-sm font-bold hover:bg-white/5 transition-colors"
               >
-                Close
+                Cancel
               </button>
               <button
                 onClick={handleSave}
