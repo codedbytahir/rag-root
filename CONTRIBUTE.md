@@ -7,7 +7,7 @@ Thank you for your interest in contributing to RAG ROOT! We welcome contribution
 1. **Fork the repository** on GitHub.
 2. **Clone your fork** locally:
    ```bash
-   git clone https://github.com/your-username/rag-root.git
+   git clone https://github.com/codedbytahir/rag-root.git
    ```
 3. **Create a new branch** for your work:
    ```bash
