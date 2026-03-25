@@ -1,0 +1,31 @@
+
+> out@0.1.0 dev
+> next dev
+
+ ⚠ Invalid next.config.mjs options detected:
+ ⚠     Unrecognized key(s) in object: 'serverComponentsExternalPackages' at "experimental"
+ ⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+ ⚠ `experimental.serverComponentsExternalPackages` has been moved to `serverExternalPackages`. Please update your next.config.mjs file accordingly.
+   ▲ Next.js 15.5.9
+   - Local:        http://localhost:3000
+   - Network:      http://192.168.0.2:3000
+   - Experiments (use with caution):
+     · serverComponentsExternalPackages
+
+ ✓ Starting...
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+https://nextjs.org/telemetry
+
+ ✓ Ready in 1806ms
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1530ms (164 modules)
+ ○ Compiling /docs ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (130kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ✓ Compiled /docs in 9.4s (675 modules)
+ GET /docs 200 in 11054ms
+ GET /docs 200 in 129ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1388ms (751 modules)
+ GET / 200 in 2374ms

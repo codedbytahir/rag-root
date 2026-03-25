@@ -43,7 +43,7 @@ export async function middleware(request) {
   const url = request.nextUrl.clone()
 
   // 1. ALLOW PUBLIC ACCESS TO DOCS
-  if (url.pathname.startsWith('/dashboard/docs')) {
+  if (url.pathname.startsWith('/docs')) {
     return supabaseResponse
   }
 
