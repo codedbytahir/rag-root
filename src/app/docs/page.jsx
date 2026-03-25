@@ -14,7 +14,7 @@ export default function ApiDocs() {
     setTimeout(() => setCopied(null), 2000);
   };
 
-  const curlExample = `curl -X POST https://rag-root.vercel.app/api/v1/query \\
+  const curlExample = `curl -X POST https://rag.zumx.site/api/v1/query \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -22,7 +22,7 @@ export default function ApiDocs() {
     "brain_id": "YOUR_BRAIN_ID"
   }'`;
 
-  const nodeExample = `const response = await fetch('https://rag-root.vercel.app/api/v1/query', {
+  const nodeExample = `const response = await fetch('https://rag.zumx.site/api/v1/query', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
@@ -90,7 +90,7 @@ console.log(data.answer);`;
             </p>
             <div className="flex items-center gap-3 bg-[#18181b] border border-white/10 rounded-xl p-4">
               <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-xs font-bold rounded border border-emerald-500/20">POST</span>
-              <code className="text-sm text-gray-300">https://rag-root.vercel.app/api/v1/query</code>
+              <code className="text-sm text-gray-300">https://rag.zumx.site/api/v1/query</code>
             </div>
 
             <div className="mt-6 space-y-4">

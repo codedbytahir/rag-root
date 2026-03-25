@@ -100,7 +100,7 @@ export default function Dashboard() {
                     <Link href="/dashboard/api-keys" className="w-full text-left px-4 py-2 text-sm text-[#a1a1aa] hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2">
                       <Key size={14} /> API Keys
                     </Link>
-                    <Link href="/dashboard/docs" className="w-full text-left px-4 py-2 text-sm text-[#a1a1aa] hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2">
+                    <Link href="/docs" className="w-full text-left px-4 py-2 text-sm text-[#a1a1aa] hover:text-white hover:bg-white/5 transition-colors flex items-center gap-2">
                       <Code2 size={14} /> Documentation
                     </Link>
                     <div className="h-px bg-white/5 my-1"></div>

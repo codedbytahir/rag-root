@@ -32,7 +32,7 @@ RAG ROOT is an enterprise-grade RAG (Retrieval-Augmented Generation) application
 - Implemented Source/Citation logic in the RAG pipeline.
 - Added citation display in `ChatInterface`.
 - Secured all internal API routes with robust ownership verification.
-- Created API Documentation page at `/dashboard/docs`.
+- Created API Documentation page at `/docs`.
 - Fixed security gap in document deletion logic.
 
 ## Performance Optimization
