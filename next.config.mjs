@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ["llamaindex","@llamaindex/openai"],
-  },
+  serverExternalPackages: ["llamaindex","@llamaindex/openai"],
   images: {
     remotePatterns: [
       {
