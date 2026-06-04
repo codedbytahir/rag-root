@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Network, ShieldCheck, Zap, Globe, Cpu } from 'lucide-react';
-import { createClient } from '../utils/supabase/client';
+import { createClient } from '@/lib/auth/supabase-client';
 
 export default function LoginPage() {
   
